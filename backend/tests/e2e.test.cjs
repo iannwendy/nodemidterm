@@ -95,7 +95,7 @@ function httpRequest(method, path, body = null) {
 async function waitForService(maxRetries = 30, interval = 2000) {
   for (let i = 1; i <= maxRetries; i++) {
     try {
-      const res = await httpRequest('GET', '/health')
+      const res = await httpRequest('GET', '/api/health')
       if (res.status === 200) {
         log('info', `Service ready after ${i} attempts`)
         return true
@@ -112,7 +112,7 @@ async function waitForService(maxRetries = 30, interval = 2000) {
 async function runHealthTests() {
   console.log(`\n${colors.cyan}═══ HEALTH CHECK TESTS ═══${colors.reset}\n`)
 
-  const res = await httpRequest('GET', '/health')
+  const res = await httpRequest('GET', '/api/health')
   assert(res.status === 200, 'Health endpoint returns 200')
   assert(res.body?.status === 'ok', 'Health status is "ok"')
   assert(res.body?.service === 'task-manager-backend', 'Service name is correct')
@@ -233,7 +233,7 @@ async function runLoadBalancingTests() {
   const instances = new Set()
 
   for (let i = 0; i < 10; i++) {
-    const res = await httpRequest('GET', '/health')
+    const res = await httpRequest('GET', '/api/health')
     if (res.body?.instance) {
       instances.add(res.body.instance)
     }

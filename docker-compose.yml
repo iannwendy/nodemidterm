@@ -6,7 +6,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: production
     container_name: taskflow-frontend
     ports:
       - "8080:80"
@@ -16,7 +15,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:80"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -43,7 +42,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/nginx-health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:80/nginx-health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -66,7 +65,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://localhost:8080
+      - CORS_ORIGIN=http://127.0.0.1:8080
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
@@ -75,7 +74,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/health"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -95,7 +94,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://localhost:8080
+      - CORS_ORIGIN=http://127.0.0.1:8080
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
@@ -104,7 +103,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/health"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -124,7 +123,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://localhost:8080
+      - CORS_ORIGIN=http://127.0.0.1:8080
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
@@ -133,7 +132,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/health"]
       interval: 15s
       timeout: 5s
       retries: 5

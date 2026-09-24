@@ -100,7 +100,7 @@ router.post('/',
   handleValidation,
   async (req, res, next) => {
     try {
-      const { title, description, status = 'todo', priority = 'medium' } = req.body
+      const { title, description = null, status = 'todo', priority = 'medium' } = req.body
       const id = uuidv4()
 
       await database.query(
