@@ -183,9 +183,6 @@ services:
           memory: 1G
       restart_policy:
         condition: on-failure
-    placement:
-      constraints:
-        - node.role == manager
 
 networks:
   taskflow:
