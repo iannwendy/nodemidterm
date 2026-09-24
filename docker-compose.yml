@@ -1,0 +1,231 @@
+services:
+  # ============================================
+  # FRONTEND - React SPA (Level 1)
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: taskflow-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      nginx:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ============================================
+  # NGINX LOAD BALANCER (Level 2+)
+  # ============================================
+  nginx:
+    image: nginx:alpine
+    container_name: taskflow-nginx
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      backend1:
+        condition: service_healthy
+      backend2:
+        condition: service_healthy
+      backend3:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  # ============================================
+  # BACKEND REPLICAS (Level 1 + Load Balanced)
+  # ============================================
+  backend1:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskflow-backend-1
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-taskflow}
+      - DB_USER=${DB_USER:-taskflow}
+      - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
+      - CORS_ORIGIN=http://localhost:8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  backend2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskflow-backend-2
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-taskflow}
+      - DB_USER=${DB_USER:-taskflow}
+      - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
+      - CORS_ORIGIN=http://localhost:8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  backend3:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskflow-backend-3
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-taskflow}
+      - DB_USER=${DB_USER:-taskflow}
+      - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
+      - CORS_ORIGIN=http://localhost:8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ============================================
+  # REDIS MESSAGE BROKER (Level 2)
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================
+  # WORKER SERVICE (Level 2 - Async Processing)
+  # ============================================
+  worker1:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: taskflow-worker-1
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  worker2:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: taskflow-worker-2
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ============================================
+  # MYSQL DATABASE (Level 1)
+  # ============================================
+  database:
+    image: mysql:8
+    container_name: taskflow-database
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-taskflow123}
+      - MYSQL_DATABASE=${DB_NAME:-taskflow}
+      - MYSQL_USER=${DB_USER:-taskflow}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-taskflow123}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-taskflow123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+    name: taskflow-network
+
+volumes:
+  mysql_data:
+    name: taskflow-mysql
+  redis_data:
+    name: taskflow-redis

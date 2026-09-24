@@ -1,0 +1,227 @@
+# ============================================
+# Docker Swarm Stack Definition
+# ============================================
+# Level 3: Container Orchestration with Docker Swarm
+# ============================================
+# Deploy with: docker stack deploy -c docker-stack.yml taskflow
+# ============================================
+
+version: "3.9"
+
+x-common-variables: &common-variables
+  DB_HOST: database
+  DB_PORT: 3306
+  DB_NAME: taskflow
+  DB_USER: taskflow
+  DB_PASSWORD: taskflow123
+  CORS_ORIGIN: "*"
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  NODE_ENV: production
+
+services:
+  # ============================================
+  # Frontend Service
+  # ============================================
+  frontend:
+    image: taskflow-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - taskflow
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  # ============================================
+  # Nginx Load Balancer
+  # ============================================
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - taskflow
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+
+  # ============================================
+  # Backend Replicas (3 instances)
+  # ============================================
+  backend1:
+    image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      <<: *common-variables
+      INSTANCE_ID: "backend-1"
+    networks:
+      - taskflow
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == worker
+
+  backend2:
+    image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      <<: *common-variables
+      INSTANCE_ID: "backend-2"
+    networks:
+      - taskflow
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == worker
+
+  backend3:
+    image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      <<: *common-variables
+      INSTANCE_ID: "backend-3"
+    networks:
+      - taskflow
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == worker
+
+  # ============================================
+  # Redis Message Broker
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb
+    networks:
+      - taskflow
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - redis_data:/data
+
+  # ============================================
+  # Worker Service (Async Processing)
+  # ============================================
+  worker:
+    image: taskflow-worker:latest
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    environment:
+      <<: *common-variables
+    networks:
+      - taskflow
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  # ============================================
+  # MySQL Database
+  # ============================================
+  database:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: taskflow123
+      MYSQL_DATABASE: taskflow
+      MYSQL_USER: taskflow
+      MYSQL_PASSWORD: taskflow123
+    networks:
+      - taskflow
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  taskflow:
+    driver: overlay
+    attachable: true
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+configs:
+  nginx_config:
+    file: ./nginx/nginx.conf

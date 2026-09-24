@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+.env
+*.log
+dist/
+build/
+coverage/
+.vscode/
+.idea/
+*.swp
+*.swo
+test-results.json

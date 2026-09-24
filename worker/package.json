@@ -1,0 +1,10 @@
+{
+  "name": "task-manager-worker",
+  "version": "1.0.0",
+  "description": "TaskFlow Worker - Async notification handler",
+  "type": "module",
+  "main": "src/worker.js",
+  "dependencies": {
+    "ioredis": "^5.3.2"
+  }
+}
