@@ -25,9 +25,6 @@ services:
   # ============================================
   frontend:
     image: taskflow-frontend:latest
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
     ports:
       - "8080:80"
     networks:
@@ -72,9 +69,6 @@ services:
   # ============================================
   backend1:
     image: taskflow-backend:latest
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-1"
@@ -90,15 +84,9 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.role == worker
 
   backend2:
     image: taskflow-backend:latest
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-2"
@@ -114,15 +102,9 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.role == worker
 
   backend3:
     image: taskflow-backend:latest
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-3"
@@ -138,9 +120,6 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.role == worker
 
   # ============================================
   # Redis Message Broker
@@ -166,9 +145,6 @@ services:
   # ============================================
   worker:
     image: taskflow-worker:latest
-    build:
-      context: ./worker
-      dockerfile: Dockerfile
     environment:
       <<: *common-variables
     networks:
@@ -198,7 +174,6 @@ services:
       - taskflow
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     deploy:
       replicas: 1
       resources:
@@ -207,9 +182,6 @@ services:
           memory: 1G
       restart_policy:
         condition: on-failure
-      placement:
-        constraints:
-          - node.role == manager
 
 networks:
   taskflow:
