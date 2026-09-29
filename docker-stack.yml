@@ -3,6 +3,11 @@
 # ============================================
 # Level 3: Container Orchestration with Docker Swarm
 # ============================================
+# Build images first:
+#   docker build -t taskflow-backend:latest ./backend
+#   docker build -t taskflow-frontend:latest ./frontend
+#   docker build -t taskflow-worker:latest ./worker
+#
 # Deploy with: docker stack deploy -c docker-stack.yml taskflow
 # ============================================
 
@@ -25,6 +30,9 @@ services:
   # ============================================
   frontend:
     image: taskflow-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     networks:
@@ -39,6 +47,12 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   # ============================================
   # Nginx Load Balancer
@@ -48,7 +62,7 @@ services:
     ports:
       - "3000:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-swarm.conf:/etc/nginx/nginx.conf:ro
     networks:
       - taskflow
     deploy:
@@ -59,16 +73,26 @@ services:
           memory: 128M
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     depends_on:
       - backend1
       - backend2
       - backend3
 
   # ============================================
-  # Backend Replicas (3 instances)
+  # Backend Replicas (3 separate services for Swarm load balancing)
+  # Note: Each service has 1 replica, total 3 instances
   # ============================================
   backend1:
     image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-1"
@@ -84,9 +108,21 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      database:
+        condition: service_healthy
 
   backend2:
     image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-2"
@@ -102,9 +138,21 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      database:
+        condition: service_healthy
 
   backend3:
     image: taskflow-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       <<: *common-variables
       INSTANCE_ID: "backend-3"
@@ -120,13 +168,22 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      database:
+        condition: service_healthy
 
   # ============================================
   # Redis Message Broker
   # ============================================
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes --maxmemory 256mb
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - taskflow
     deploy:
@@ -139,14 +196,23 @@ services:
         condition: on-failure
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ============================================
   # Worker Service (Async Processing)
   # ============================================
   worker:
     image: taskflow-worker:latest
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
     environment:
-      <<: *common-variables
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     networks:
       - taskflow
     deploy:
@@ -159,6 +225,9 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    depends_on:
+      redis:
+        condition: service_healthy
 
   # ============================================
   # MySQL Database
@@ -183,6 +252,12 @@ services:
           memory: 1G
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ptaskflow123"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 networks:
   taskflow:
@@ -194,7 +269,3 @@ volumes:
     driver: local
   redis_data:
     driver: local
-
-configs:
-  nginx_config:
-    file: ./nginx/nginx.conf

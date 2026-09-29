@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      nginx:
+      backend1:
         condition: service_healthy
     networks:
       - app-network
@@ -60,6 +60,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - INSTANCE_ID=backend-1
       - DB_HOST=database
       - DB_PORT=3306
       - DB_NAME=${DB_NAME:-taskflow}
@@ -89,6 +90,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - INSTANCE_ID=backend-2
       - DB_HOST=database
       - DB_PORT=3306
       - DB_NAME=${DB_NAME:-taskflow}
@@ -118,6 +120,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - INSTANCE_ID=backend-3
       - DB_HOST=database
       - DB_PORT=3306
       - DB_NAME=${DB_NAME:-taskflow}
@@ -211,7 +214,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-taskflow123}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 10
