@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// Use relative path in production (proxied through nginx),
-// or localhost:3000 in development
+// In production (Docker): API is proxied through nginx at port 3000
+// In development: Use localhost:3000 directly
 const API_BASE = import.meta.env.VITE_API_URL || (
   import.meta.env.PROD ? '/api' : 'http://localhost:3000/api'
 )

@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      backend1:
+      nginx:
         condition: service_healthy
     networks:
       - app-network
