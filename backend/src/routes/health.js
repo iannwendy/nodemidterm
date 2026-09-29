@@ -12,6 +12,7 @@ router.get('/health', async (req, res) => {
     uptime: process.uptime(),
     service: 'task-manager-backend',
     version: '1.0.0',
+    instance: process.env.INSTANCE_ID || 'single',
     checks: {}
   }
 

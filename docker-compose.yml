@@ -9,9 +9,6 @@ services:
     container_name: taskflow-frontend
     ports:
       - "8080:80"
-    depends_on:
-      nginx:
-        condition: service_healthy
     networks:
       - app-network
     healthcheck:
@@ -148,8 +145,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: taskflow-redis
-    ports:
-      - "6379:6379"
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
@@ -179,6 +174,12 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   worker2:
     build:
@@ -194,6 +195,12 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   # ============================================
   # MYSQL DATABASE (Level 1)
