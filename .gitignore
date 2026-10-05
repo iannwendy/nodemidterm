@@ -10,3 +10,15 @@ coverage/
 *.swp
 *.swo
 test-results.json
+
+# Documentation and local files (not for push)
+TDTU-Latex/
+BaoCao_YeuCau.md
+CLAUDE.md
+DEMO-SCRIPT-VN.md
+TESTING-GUIDE.md
+agent.md
+
+# PDF files
+*.pdf
+!README.pdf
