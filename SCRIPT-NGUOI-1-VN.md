@@ -1,11 +1,11 @@
-# 🎬 KỊCH BẢN THUYẾT TRÌNH - NGƯỜI 1 (TIẾNG VIỆT LIỀN MẠCH + LỆNH MACOS)
+# 🎬 KỊCH BẢN THUYẾT TRÌNH - NGƯỜI 1 (SCRIPT TIẾNG ANH + LỆNH MACOS)
 ## Project: TaskFlow - Dockerized Node.js Web Application (0:00 - 6:00)
 
 ---
 
 ## 🔧 BƯỚC 0: CHUẨN BỊ TRƯỚC KHI BẤM MÁY QUAY (macOS)
 
-Mở ứng dụng **Docker Desktop** và đợi biểu tượng chuyển sang màu xanh. Sau đó mở **Terminal** trên Mac và chạy các lệnh sau (không chứa dòng `#` để copy-paste trực tiếp vào `zsh` không bị lỗi):
+Mở ứng dụng **Docker Desktop** và đợi biểu tượng chuyển sang màu xanh. Sau đó mở **Terminal** trên Mac và chạy lần lượt các lệnh sau:
 
 **1. Di chuyển vào thư mục project:**
 ```bash
@@ -17,116 +17,140 @@ cd /Users/iannwendy/Desktop/NodeMidterm
 docker compose up -d --build --force-recreate
 ```
 
-**3. Kiểm tra trạng thái (đảm bảo cả 8 container đều Up / healthy):**
+**3. Kiểm tra trạng thái (đảm bảo tất cả các container đều Up / healthy):**
 ```bash
 docker compose ps
 ```
 
 ---
 
-## 🎙️ KỊCH BẢN NÓI TIẾNG VIỆT LIỀN MẠCH (KÈM LỆNH MACOS)
+## 🎙️ KỊCH BẢN NÓI TIẾNG ANH LIỀN MẠCH (KÈM LỆNH MACOS)
 
-### Phần 1: Giới thiệu mở đầu (0:00 - 1:30)
+### Phần 1: Giới thiệu mở đầu — Introduction (0:00 - 1:30)
 *(Góc máy: Bật Webcam hoặc mở sơ đồ kiến trúc project trên màn hình)*
 
-> "Xin chào thầy và các bạn! Em tên là **[Tên của bạn]**. Hôm nay em xin đại diện nhóm trình bày đồ án giữa kỳ môn **Lập trình Web với Node.js (mã môn 502070)** do thầy **Mai Văn Mạnh** hướng dẫn.
->
-> Dự án của nhóm em có tên là **TaskFlow** — một ứng dụng Quản lý Công việc (Task Manager) được đóng gói hoàn toàn bằng Docker, xây dựng trên nền tảng **Node.js, React, MySQL, Redis và Nginx**.
->
-> Nhóm chúng em gồm có 3 thành viên: Em sẽ phụ trách phần giới thiệu tổng quan kiến trúc, kiểm tra hệ thống container, Backend API và cơ sở dữ liệu MySQL. Tiếp theo, bạn **[Tên người 2]** sẽ trình bày phần giao diện Frontend cùng cơ chế cân bằng tải (Load Balancing). Cuối cùng, bạn **[Tên người 3]** sẽ trình bày về hàng đợi Redis, tiến trình xử lý bất đồng bộ (Worker) và điều phối container (Container Orchestration).
->
-> Trong buổi demo hôm nay, nhóm sẽ đi qua đầy đủ cả **3 cấp độ (3 Levels)** theo yêu cầu của đề bài:
-> - **Level 1:** Thiết lập Docker cơ bản cho hệ thống.
-> - **Level 2:** Triển khai cân bằng tải với Nginx và xử lý thông điệp qua Redis Message Broker.
-> - **Level 3:** Điều phối container nâng cao với Docker Swarm và Kubernetes."
+🗣️ **Script Tiếng Anh (đọc liền mạch):**
 
-*(Chuyển màn hình sang cửa sổ Terminal trên macOS)*
+> "Hello everyone! My name is **[Tên của bạn]**, and today I'm going to present our **NodeJS Mid-term project** for course **502070 - Web Programming with NodeJS**, taught by instructor **Mai Van Manh**.
+>
+> Our project is called **TaskFlow** — a Dockerized Task Manager built with **Node.js, React, MySQL, Redis, and Nginx**.
+>
+> We are a team of **3 members**: I will present the project overview, Docker containers, Backend APIs, and MySQL database. Next, **[Tên người 2]** will present the frontend user interface and Nginx load balancing. Finally, **[Tên người 3]** will present the Redis message queue, async workers, and container orchestration.
+>
+> In this demo, we will cover all **3 levels** required by the assignment:
+> - **Level 1** with basic Docker setup for Frontend, Backend, and Database.
+> - **Level 2** with Nginx load balancing and Redis message broker for async processing.
+> - **Level 3** with Docker Swarm and Kubernetes orchestration."
+
+*(Hành động: Vẫy tay chào → chuyển màn hình sang cửa sổ Terminal trên macOS)*
 
 ---
 
 ### Phần 2: Kiểm tra các Docker Containers (1:30 - 2:30)
 
-> "Đầu tiên, chúng ta sẽ kiểm tra xem toàn bộ các Docker container của hệ thống đã hoạt động ổn định hay chưa. Em sẽ chạy lệnh `docker compose ps` để liệt kê danh sách tất cả các dịch vụ đang chạy."
+🗣️ **Script Tiếng Anh (trước khi gõ lệnh):**
+
+> "First, let's verify that all Docker containers are running properly. I'm running `docker compose ps` to list all active services."
 
 💻 **Chạy lệnh trên Terminal (macOS):**
 ```bash
 docker compose ps
 ```
 
-> "Như thầy và các bạn có thể thấy trên màn hình, hiện tại chúng ta có tổng cộng **8 dịch vụ (services)** đang hoạt động:
-> - Thứ nhất là **taskflow-frontend**: Giao diện người dùng viết bằng React, được mở ở cổng **8080**.
-> - Thứ hai là **taskflow-nginx**: Bộ cân bằng tải (Load Balancer) lắng nghe ở cổng **3000**.
-> - Tiếp theo là **taskflow-backend-1, backend-2 và backend-3**: Ba bản sao (replicas) của Node.js API server.
-> - **taskflow-redis**: Đóng vai trò là Message Broker (trung gian truyền tải thông điệp).
-> - **taskflow-worker-1 và worker-2**: Hai worker xử lý các tác vụ ngầm bất đồng bộ.
-> - Và cuối cùng là **taskflow-database**: Cơ sở dữ liệu MySQL phiên bản 8 chạy ở cổng **3306**.
+🗣️ **Script Tiếng Anh (giải thích kết quả trên màn hình):**
+
+> "As you can see on the screen, all of our services are up and running:
+> - **taskflow-frontend** — the React user interface exposed on port **8080**.
+> - **taskflow-nginx** — the Nginx load balancer listening on port **3000**.
+> - **taskflow-backend-1, backend-2, and backend-3** — three Node.js API replicas.
+> - **taskflow-redis** — the Redis message broker.
+> - **taskflow-worker-1 and worker-2** — two background workers for asynchronous processing.
+> - And **taskflow-database** — MySQL 8 running on port **3306**.
 >
-> Tất cả các dịch vụ đều đang ở trạng thái **Up** và **healthy**, nghĩa là toàn bộ hạ tầng của chúng ta đã sẵn sàng hoạt động."
+> All services are in the **Up** and **healthy** state, meaning our infrastructure is ready."
 
 ---
 
 ### Phần 3: Kiểm thử Backend API (2:30 - 4:30)
 
 #### 3.1. Kiểm tra Health Endpoint
-> "Tiếp theo, em sẽ tiến hành kiểm thử trực tiếp các API ở phía Backend. Đầu tiên là endpoint kiểm tra sức khỏe hệ thống (`/api/health`)."
+🗣️ **Script Tiếng Anh:**
+
+> "Now let's test the backend API endpoints. First, I will check the **health endpoint** at `/api/health`."
 
 💻 **Chạy lệnh trên Terminal (macOS):**
 ```bash
 curl -s http://localhost:3000/api/health | python3 -m json.tool
 ```
 
-> "Kết quả trả về từ Health endpoint bao gồm:
-> - **status**: `ok` — cho biết server đang hoạt động tốt.
-> - **instance**: `backend-1` (hoặc 2, 3) — đây là mã định danh duy nhất của từng container backend, giúp chúng ta kiểm chứng tính năng cân bằng tải ở phần sau.
-> - **database** và **redis**: đều ở trạng thái `ok` (đã kết nối thành công kèm thời gian phản hồi).
-> - Cùng với thông số **uptime** cho biết thời gian máy chủ đã hoạt động liên tục."
+🗣️ **Script Tiếng Anh (giải thích output):**
 
-#### 3.2. Lấy danh sách toàn bộ công việc (Tasks)
-> "Tiếp theo, chúng ta sẽ gọi API lấy danh sách toàn bộ các công việc hiện có trong hệ thống."
+> "The health endpoint returns:
+> - **status**: `ok`
+> - **instance**: `backend-1` (or `backend-2`, `backend-3`) — this is the unique instance ID that helps us verify load balancing later.
+> - **database**: `ok`, and **redis**: `ok`, along with their response times.
+> - And **uptime**, showing how long the server has been running."
+
+#### 3.2. Lấy danh sách toàn bộ công việc (Get All Tasks)
+🗣️ **Script Tiếng Anh:**
+
+> "Next, let's fetch all tasks from the `/api/tasks` endpoint."
 
 💻 **Chạy lệnh trên Terminal (macOS):**
 ```bash
 curl -s http://localhost:3000/api/tasks | python3 -c 'import sys,json; d=json.load(sys.stdin); print("Total tasks:", len(d.get("data", d)))'
 ```
 
-> "API trả về tổng cộng **21 công việc mẫu (sample tasks)**. Toàn bộ dữ liệu này được đọc trực tiếp từ cơ sở dữ liệu MySQL thông qua cụm Backend API."
+🗣️ **Script Tiếng Anh:**
 
-#### 3.3. Kiểm tra API Thống kê (Statistics)
-> "Tiếp tục, em sẽ kiểm tra thêm endpoint thống kê (`/api/stats`)."
+> "As you can see, there are **21 sample tasks** stored in our MySQL database and returned by the backend API."
+
+#### 3.3. Kiểm tra API Thống kê (Get Statistics)
+🗣️ **Script Tiếng Anh:**
+
+> "Now let's test the **statistics endpoint** at `/api/stats`."
 
 💻 **Chạy lệnh trên Terminal (macOS):**
 ```bash
 curl -s http://localhost:3000/api/stats | python3 -m json.tool
 ```
 
-> "Endpoint thống kê này trả về sự phân bổ số lượng công việc theo từng trạng thái (Status) và mức độ ưu tiên (Priority) — đây chính là nguồn dữ liệu để hiển thị lên bảng điều khiển (Dashboard) ở phía giao diện người dùng."
+🗣️ **Script Tiếng Anh:**
+
+> "The statistics endpoint shows the total number of tasks, their distribution by status and priority, and recent tasks — this data directly powers the frontend dashboard."
 
 ---
 
 ### Phần 4: Kiểm chứng Cơ sở dữ liệu MySQL (4:30 - 6:00)
 
-> "Cuối cùng trong phần trình bày của mình, em sẽ truy cập trực tiếp vào bên trong container MySQL để xác nhận rằng dữ liệu thực sự được lưu trữ bền vững trong cơ sở dữ liệu."
+🗣️ **Script Tiếng Anh:**
+
+> "Finally, let's connect directly to the MySQL container to verify that our data is persisted in the database."
 
 💻 **Chạy lệnh đếm số lượng công việc theo trạng thái (macOS):**
 ```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) AS total, status FROM tasks GROUP BY status;"
 ```
 
-> "Và chúng ta cũng có thể kiểm tra chi tiết cấu trúc của bảng `tasks` bằng câu lệnh `DESCRIBE tasks`."
+🗣️ **Script Tiếng Anh:**
+
+> "Here we can see the exact task counts grouped by status: `todo`, `in-progress`, and `done`. Next, let's inspect the `tasks` table structure using `DESCRIBE tasks`."
 
 💻 **Chạy lệnh xem cấu trúc bảng (macOS):**
 ```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; DESCRIBE tasks;"
 ```
 
-> "Như trên màn hình, bảng `tasks` bao gồm đầy đủ các trường thông tin: `id`, `title`, `description`, `status`, `priority`, `created_at` và `updated_at`. Toàn bộ dữ liệu này được lưu trữ bền vững thông qua Docker Volume có tên là **taskflow-mysql**, đảm bảo không bị mất dữ liệu ngay cả khi khởi động lại container.
+🗣️ **Script Tiếng Anh:**
+
+> "The `tasks` table contains columns for `id`, `title`, `description`, `status`, `priority`, `created_at`, and `updated_at`. All data is persisted through the Docker volume **taskflow-mysql**, so no data is lost when containers restart.
 >
-> Phần trình bày của em đến đây là kết thúc. Tiếp theo, xin mời bạn **[Tên người 2]** sẽ tiếp tục demo phần giao diện người dùng và các thao tác thêm, sửa, xóa cũng như kiểm thử cân bằng tải."
+> That concludes my section. Now **[Tên người 2]** will demonstrate the frontend interface, CRUD operations, and load balancing."
 
 ---
 
 ## 📋 TỔNG HỢP LỆNH MACOS ĐỂ COPY NHANH KHI QUAY
-*(Đã loại bỏ các dòng comment `#` để bạn có thể copy từng dòng hoặc cả cụm dán thẳng vào Terminal `zsh` trên macOS)*
+*(Đã loại bỏ các dòng comment `#` để bạn copy-paste thẳng vào Terminal `zsh` trên macOS không bị lỗi)*
 
 **Lệnh 1 — Kiểm tra danh sách containers:**
 ```bash

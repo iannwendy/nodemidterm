@@ -1,9 +1,12 @@
-# 🎬 KỊCH BẢN DEMO VIDEO - 3 NGƯỜI (FULL TIẾNG VIỆT)
+# 🎬 KỊCH BẢN DEMO VIDEO - 3 NGƯỜI (SCRIPT TIẾNG ANH)
 ## TaskFlow - Dockerized Node.js Web Application
 
-> **Mục tiêu:** Chia đều phần trình bày cho 3 thành viên bằng tiếng Việt mạch lạc, tổng thời gian ~17-18 phút, đảm bảo mỗi người nói khoảng 5-6 phút.
+> **Mục tiêu:** Chia đều phần trình bày cho 3 thành viên (thuyết trình bằng Tiếng Anh), tổng thời gian ~17-18 phút, đảm bảo mỗi người nói khoảng 5-6 phút.
 >
-> **Nguyên tắc:** Mỗi người tự quay màn hình + giọng của mình. Có thể ghép video cuối cùng bằng CapCut/Premiere. Mỗi người cần thấy mặt + nghe giọng (kết hợp webcam + screen share).
+> **Hệ điều hành theo thành viên:**
+> - **Người 1:** Dùng **macOS** (Terminal `zsh`)
+> - **Người 2:** Dùng **Hệ điều hành Windows** (Windows PowerShell)
+> - **Người 3:** Dùng **Hệ điều hành Windows** (Windows PowerShell)
 
 ---
 
@@ -13,73 +16,49 @@
 |-----|----------|
 | **Project** | TaskFlow - Dockerized Task Manager |
 | **Môn học** | Web Programming with NodeJS - 502070 |
-| **Giảng viên** | Mai Văn Mạnh |
+| **Giảng viên** | Mai Van Manh |
 | **Stack** | Docker, Node.js, React, MySQL, Redis, Nginx, Docker Swarm, Kubernetes |
 | **Tổng thời gian** | ~17 phút (3 × ~5-6 phút) |
-| **Ngôn ngữ** | Thuyết trình hoàn toàn bằng Tiếng Việt |
+| **Ngôn ngữ nói** | Tiếng Anh (đọc theo script bên dưới) |
 
 ---
 
-## 🎯 PHÂN CHIA THEO NGƯỜI
+## 🎯 PHÂN CHIA THEO NGƯỜI & HỆ ĐIỀU HÀNH
 
-| Người | Phụ trách | Thời gian | Nội dung chính |
-|-------|-----------|-----------|----------------|
-| **Người 1 - Leader** | Intro + Level 1 (Backend/Database) | 0:00 - 6:00 | Giới thiệu, kiểm tra containers, test API, MySQL |
-| **Người 2 - Frontend** | Level 1 (UI/CRUD) + Level 2 (Load Balancer) | 6:00 - 12:00 | Demo giao diện, CRUD qua UI, Load Balancing test |
-| **Người 3 - Orchestration** | Level 2 (Redis/Worker) + Level 3 (Swarm/K8s) + Kết luận | 12:00 - 17:30 | Redis queue, worker logs, Swarm/K8s, tổng kết |
+| Người | Hệ điều hành | Phụ trách | Thời gian | Nội dung chính |
+|-------|-------------|-----------|-----------|----------------|
+| **Người 1 - Leader** | 🍎 **macOS** | Intro + Level 1 (Backend/Database) | 0:00 - 6:00 | Giới thiệu, kiểm tra containers, test API, MySQL |
+| **Người 2 - Frontend** | 🪟 **Windows OS** | Level 1 (UI/CRUD) + Level 2 (Load Balancer) | 6:00 - 12:00 | Demo giao diện, CRUD qua UI, Load Balancing test |
+| **Người 3 - Orchestration** | 🪟 **Windows OS** | Level 2 (Redis/Worker) + Level 3 (Swarm/K8s) + Kết luận | 12:00 - 17:30 | Redis queue, worker logs, Swarm/K8s, tổng kết |
 
 ---
 
-## 🔧 CHUẨN BỊ CHUNG CHO CẢ 3 NGƯỜI
+## 🔧 CHUẨN BỊ CHUNG TRƯỚC KHI QUAY
 
-### Trước khi quay (mỗi người phải làm)
-
-1. **Khởi động Docker Desktop** và đợi biểu tượng chuyển sang màu xanh.
-2. **Mở 2-3 cửa sổ Terminal** (trên Mac hoặc PowerShell trên Windows).
-3. **Di chuyển vào thư mục project:**
-   - **Mac/Linux:**
+1. **Khởi động Docker Desktop** và đợi biểu tượng chuyển sang trạng thái Running.
+2. **Mở Terminal (macOS) hoặc Windows PowerShell (Windows OS)** và di chuyển vào thư mục project:
+   - **Người 1 (macOS):**
      ```bash
      cd /Users/iannwendy/Desktop/NodeMidterm
      ```
-   - **Windows PowerShell:**
+   - **Người 2 & Người 3 (Windows OS - PowerShell):**
      ```powershell
      cd C:\Users\<YourName>\Desktop\NodeMidterm
      ```
-4. **Khởi chạy và làm mới tất cả services:**
-   ```bash
+3. **Khởi chạy và làm mới toàn bộ services:**
+   ```powershell
    docker compose up -d --build --force-recreate
    ```
-5. **Đợi khoảng 30-60 giây** cho các services chuyển sang trạng thái `healthy`.
-6. **Kiểm tra mọi thứ đã sẵn sàng:**
-   ```bash
+4. **Đợi khoảng 30-60 giây** rồi kiểm tra trạng thái:
+   ```powershell
    docker compose ps
    ```
-   → Tất cả phải ở trạng thái `Up` và `healthy`.
-
-### Mở sẵn các cửa sổ
-
-| Cửa sổ | Mở gì | Dùng để |
-|--------|--------|---------|
-| Terminal A | Project root | Chạy lệnh docker và curl |
-| Terminal B | `docker compose logs -f worker1` | Xem logs worker real-time |
-| Browser | http://localhost:8080 | Frontend UI |
-| Browser (tab 2) | http://localhost:3000/api/health | API Health |
-| Code editor | VSCode mở project | Show code khi cần |
-
-### Lỗi thường gặp & fix nhanh
-
-| Lỗi | Cách xử lý |
-|-----|-----------|
-| Service không healthy | `docker compose up -d --build --force-recreate` |
-| Port 8080/3000 bị chiếm | `lsof -i :8080` (Mac) / `netstat -ano \| findstr :8080` (Win) |
-| Frontend trắng trang | Clear cache (`Cmd+Shift+R` / `Ctrl+Shift+R`) + `docker compose restart frontend` |
-| Worker không nhận message | `docker compose logs worker1` xem lỗi |
-| MySQL chưa ready | Đợi thêm 30s, MySQL khởi tạo lần đầu cần thời gian |
+   → Đảm bảo tất cả các containers đều `Up` và `healthy`.
 
 ---
 
-# 👤 NGƯỜI 1 - LEADER (INTRO + LEVEL 1 BACKEND & DATABASE)
-## Thời gian: 0:00 - 6:00 (6 phút)
+# 👤 NGƯỜI 1 - LEADER (🍎 HỆ ĐIỀU HÀNH MACOS)
+## Nội dung: Intro + Level 1 (Backend & MySQL Database) | Thời gian: 0:00 - 6:00
 
 ### Mục tiêu
 - Giới thiệu project, thành viên và 3 cấp độ (Levels) của đồ án
@@ -93,467 +72,441 @@
 
 **Hành động:** Mở slide/sơ đồ kiến trúc hoặc nói trực tiếp vào camera.
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh (đọc nguyên văn):**
 
-> "Xin chào thầy và các bạn! Em tên là **[Tên của bạn]**. Hôm nay em xin đại diện nhóm trình bày đồ án giữa kỳ môn **Lập trình Web với Node.js (mã môn 502070)** do thầy **Mai Văn Mạnh** hướng dẫn.
+> "Hello everyone! My name is **[Tên của bạn]**, and today I'm going to present our **NodeJS Mid-term project** for course **502070 - Web Programming with NodeJS**, taught by instructor **Mai Van Manh**.
 >
-> Dự án của nhóm em có tên là **TaskFlow** — một ứng dụng Quản lý Công việc (Task Manager) được đóng gói hoàn toàn bằng Docker, xây dựng trên nền tảng **Node.js, React, MySQL, Redis và Nginx**.
+> Our project is called **TaskFlow** — a Dockerized Task Manager built with **Node.js, React, MySQL, Redis, and Nginx**.
 >
-> Nhóm chúng em gồm có 3 thành viên: Em sẽ phụ trách phần giới thiệu tổng quan kiến trúc, kiểm tra hệ thống container, Backend API và cơ sở dữ liệu MySQL. Tiếp theo, bạn **[Tên người 2]** sẽ trình bày phần giao diện Frontend cùng cơ chế cân bằng tải (Load Balancing). Cuối cùng, bạn **[Tên người 3]** sẽ trình bày về hàng đợi Redis, tiến trình xử lý bất đồng bộ (Worker) và điều phối container (Container Orchestration).
+> We are a team of **3 members**: I will present the project overview, Docker containers, Backend APIs, and MySQL database. Next, **[Tên người 2]** will present the frontend user interface and Nginx load balancing. Finally, **[Tên người 3]** will present the Redis message queue, async workers, and container orchestration.
 >
-> Trong buổi demo hôm nay, nhóm sẽ đi qua đầy đủ cả **3 cấp độ (3 Levels)** theo yêu cầu của đề bài:
-> - **Level 1:** Thiết lập Docker cơ bản cho hệ thống.
-> - **Level 2:** Triển khai cân bằng tải với Nginx và xử lý thông điệp qua Redis Message Broker.
-> - **Level 3:** Điều phối container nâng cao với Docker Swarm và Kubernetes."
+> In this demo, we will cover all **3 levels** required by the assignment:
+> - **Level 1** with basic Docker setup for Frontend, Backend, and Database.
+> - **Level 2** with Nginx load balancing and Redis message broker for async processing.
+> - **Level 3** with Docker Swarm and Kubernetes orchestration."
 
-**[Hành động:]** Chuyển sang màn hình Terminal A.
+**[Hành động:]** Vẫy tay chào → chuyển sang màn hình Terminal trên macOS.
 
 ---
 
 ### Phần 2: Kiểm tra Docker Containers (1:30 - 2:30) ⭐ 60 giây
 
-**[GÓC MÁY: Terminal A - toàn màn hình]**
+**[GÓC MÁY: Terminal macOS - toàn màn hình]**
 
-**Hành động:** Chạy lệnh `docker compose ps`, phóng to chữ cho dễ nhìn.
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
+> "First, let's verify that all Docker containers are running properly. I'm running `docker compose ps` to list all active services."
+
+💻 **Lệnh (macOS Terminal):**
 ```bash
 docker compose ps
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh (giải thích khi nhìn vào output):**
 
-> "Đầu tiên, chúng ta sẽ kiểm tra xem toàn bộ các Docker container của hệ thống đã hoạt động ổn định hay chưa. Em sẽ chạy lệnh `docker compose ps` để liệt kê danh sách tất cả các dịch vụ đang chạy."
-
-**Giải thích khi nhìn vào kết quả trên màn hình:**
-
-> "Như thầy và các bạn có thể thấy trên màn hình, hiện tại toàn bộ các dịch vụ của hệ thống đều đang hoạt động:
-> - Thứ nhất là **taskflow-frontend**: Giao diện người dùng viết bằng React, được mở ở cổng **8080**.
-> - Thứ hai là **taskflow-nginx**: Bộ cân bằng tải (Load Balancer) lắng nghe ở cổng **3000**.
-> - Tiếp theo là **taskflow-backend-1, backend-2 và backend-3**: Ba bản sao (replicas) của Node.js API server.
-> - **taskflow-redis**: Đóng vai trò là Message Broker (trung gian truyền tải thông điệp).
-> - **taskflow-worker-1 và worker-2**: Hai worker xử lý các tác vụ ngầm bất đồng bộ.
-> - Và cuối cùng là **taskflow-database**: Cơ sở dữ liệu MySQL phiên bản 8 chạy ở cổng **3306**.
+> "As you can see on the screen, all of our services are up and running:
+> - **taskflow-frontend** — the React user interface exposed on port **8080**.
+> - **taskflow-nginx** — the Nginx load balancer listening on port **3000**.
+> - **taskflow-backend-1, backend-2, and backend-3** — three Node.js API replicas.
+> - **taskflow-redis** — the Redis message broker.
+> - **taskflow-worker-1 and worker-2** — two background workers for asynchronous processing.
+> - And **taskflow-database** — MySQL 8 running on port **3306**.
 >
-> Tất cả các dịch vụ đều đang ở trạng thái **Up** và **healthy**, nghĩa là toàn bộ hạ tầng của chúng ta đã sẵn sàng hoạt động."
+> All services are in the **Up** and **healthy** state, meaning our infrastructure is ready."
 
 ---
 
 ### Phần 3: Kiểm thử Backend API (2:30 - 4:30) ⭐ 120 giây
 
-**[GÓC MÁY: Terminal A]**
+**[GÓC MÁY: Terminal macOS]**
 
 #### 3.1 - Health Check
 
-**Lệnh (Mac/Linux):**
+🗣️ **Script Tiếng Anh:**
+
+> "Now let's test the backend API endpoints. First, I will check the **health endpoint** at `/api/health`."
+
+💻 **Lệnh (macOS Terminal):**
 ```bash
 curl -s http://localhost:3000/api/health | python3 -m json.tool
 ```
 
-**Lệnh (Windows PowerShell):**
-```powershell
-Invoke-RestMethod http://localhost:3000/api/health | ConvertTo-Json
-```
+🗣️ **Script Tiếng Anh (giải thích output):**
 
-**Lời dẫn (Tiếng Việt):**
+> "The health endpoint returns:
+> - **status**: `ok`
+> - **instance**: `backend-1` (or `backend-2`, `backend-3`) — this is the unique instance ID that helps us verify load balancing later.
+> - **database**: `ok`, and **redis**: `ok`, along with their response times.
+> - And **uptime**, showing how long the server has been running."
 
-> "Tiếp theo, em sẽ tiến hành kiểm thử trực tiếp các API ở phía Backend. Đầu tiên là endpoint kiểm tra sức khỏe hệ thống (`/api/health`)."
+#### 3.2 - Get All Tasks
 
-**Giải thích kết quả:**
+🗣️ **Script Tiếng Anh:**
 
-> "Kết quả trả về từ Health endpoint bao gồm:
-> - **status**: `ok` — cho biết server đang hoạt động tốt.
-> - **instance**: `backend-1` (hoặc 2, 3) — đây là mã định danh duy nhất của từng container backend, giúp chúng ta kiểm chứng tính năng cân bằng tải ở phần sau.
-> - **database** và **redis**: đều ở trạng thái `ok` (đã kết nối thành công kèm thời gian phản hồi).
-> - Cùng với thông số **uptime** cho biết thời gian máy chủ đã hoạt động liên tục."
+> "Next, let's fetch all tasks from the `/api/tasks` endpoint."
 
-#### 3.2 - Lấy danh sách toàn bộ công việc (Get All Tasks)
-
-**Lệnh (Mac/Linux):**
+💻 **Lệnh (macOS Terminal):**
 ```bash
 curl -s http://localhost:3000/api/tasks | python3 -c 'import sys,json; d=json.load(sys.stdin); print("Total tasks:", len(d.get("data", d)))'
 ```
 
-**Lệnh (Windows PowerShell):**
-```powershell
-(Invoke-RestMethod http://localhost:3000/api/tasks).data.Count
-```
+🗣️ **Script Tiếng Anh:**
 
-**Lời dẫn (Tiếng Việt):**
+> "As you can see, there are **21 sample tasks** stored in our MySQL database and returned by the backend API."
 
-> "Tiếp theo, chúng ta sẽ gọi API lấy danh sách toàn bộ các công việc hiện có trong hệ thống. Kết quả trả về tổng cộng **21 công việc mẫu (sample tasks)** được đọc trực tiếp từ cơ sở dữ liệu MySQL."
+#### 3.3 - Get Statistics
 
-#### 3.3 - Kiểm tra API Thống kê (Get Statistics)
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Mac/Linux):**
+> "Now let's test the **statistics endpoint** at `/api/stats`."
+
+💻 **Lệnh (macOS Terminal):**
 ```bash
 curl -s http://localhost:3000/api/stats | python3 -m json.tool
 ```
 
-**Lệnh (Windows PowerShell):**
-```powershell
-Invoke-RestMethod http://localhost:3000/api/stats | ConvertTo-Json
-```
+🗣️ **Script Tiếng Anh:**
 
-**Lời dẫn (Tiếng Việt):**
-
-> "Tiếp tục, em sẽ kiểm tra thêm endpoint thống kê (`/api/stats`). Endpoint này trả về sự phân bổ số lượng công việc theo từng trạng thái (Status) và mức độ ưu tiên (Priority) — đây chính là nguồn dữ liệu để hiển thị lên bảng điều khiển (Dashboard) ở phía giao diện người dùng."
+> "The statistics endpoint shows the total number of tasks, their distribution by status and priority, and recent tasks — this data directly powers the frontend dashboard."
 
 ---
 
 ### Phần 4: Kiểm chứng Cơ sở dữ liệu MySQL (4:30 - 6:00) ⭐ 90 giây
 
-**[GÓC MÁY: Terminal A]**
+**[GÓC MÁY: Terminal macOS]**
 
-**Lệnh đếm số lượng công việc theo trạng thái (Mac/Linux & Windows giống nhau):**
+🗣️ **Script Tiếng Anh:**
+
+> "Finally, let's connect directly to the MySQL container to verify that our data is persisted in the database."
+
+💻 **Lệnh (macOS Terminal):**
 ```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) AS total, status FROM tasks GROUP BY status;"
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Cuối cùng trong phần trình bày của mình, em sẽ truy cập trực tiếp vào bên trong container MySQL để xác nhận rằng dữ liệu thực sự được lưu trữ bền vững trong cơ sở dữ liệu."
+> "Here we can see the exact task counts grouped by status: `todo`, `in-progress`, and `done`. Next, let's inspect the `tasks` table structure using `DESCRIBE tasks`."
 
-**Lệnh xem cấu trúc bảng (Mac/Linux & Windows giống nhau):**
+💻 **Lệnh (macOS Terminal):**
 ```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; DESCRIBE tasks;"
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Và chúng ta cũng có thể kiểm tra chi tiết cấu trúc của bảng `tasks` bằng câu lệnh `DESCRIBE tasks`. Như trên màn hình, bảng `tasks` bao gồm đầy đủ các trường thông tin: `id`, `title`, `description`, `status`, `priority`, `created_at` và `updated_at`. Toàn bộ dữ liệu này được lưu trữ bền vững thông qua Docker Volume có tên là **taskflow-mysql**, đảm bảo không bị mất dữ liệu ngay cả khi khởi động lại container.
+> "The `tasks` table contains columns for `id`, `title`, `description`, `status`, `priority`, `created_at`, and `updated_at`. All data is persisted through the Docker volume **taskflow-mysql**, so no data is lost when containers restart.
 >
-> Phần trình bày của em đến đây là kết thúc. Tiếp theo, xin mời bạn **[Tên người 2]** sẽ tiếp tục demo phần giao diện người dùng và các thao tác thêm, sửa, xóa cũng như kiểm thử cân bằng tải."
+> That concludes my section. Now **[Tên người 2]** will demonstrate the frontend interface, CRUD operations, and load balancing."
 
 **[Hành động:]** Cười, gật đầu, chuyển quyền cho Người 2.
 
 ---
 
-### ✅ Checklist cho Người 1 trước khi quay
-
-- [ ] Docker Desktop đang chạy
-- [ ] Tất cả containers `Up` và `healthy`
-- [ ] Terminal đã mở ở đúng thư mục project
-- [ ] Đã test chạy thử 3 lệnh curl trên
-- [ ] Đã thử lệnh mysql exec chạy mượt
-- [ ] Webcam sẵn sàng + mic test OK
-- [ ] Có slide/sơ đồ kiến trúc để show ở phần intro
-
----
-
-# 👤 NGƯỜI 2 - FRONTEND & LOAD BALANCING
-## Thời gian: 6:00 - 12:00 (6 phút)
+# 👤 NGƯỜI 2 - FRONTEND & LOAD BALANCING (🪟 HỆ ĐIỀU HÀNH WINDOWS)
+## Nội dung: Level 1 (UI/CRUD) + Level 2 (Nginx Load Balancing) | Thời gian: 6:00 - 12:00
 
 ### Mục tiêu
-- Demo giao diện React trên trình duyệt
-- Thực hiện các thao tác CRUD (Thêm, Sửa, Xóa) trực tiếp trên giao diện
-- Chứng minh cơ chế cân bằng tải (Load Balancing) qua Nginx
+- Demo giao diện React tại `http://localhost:8080`
+- Test đầy đủ CRUD (Create, Update, Delete) trên giao diện UI
+- Chứng minh Load Balancing qua Nginx bằng **Windows PowerShell**
 
 ### Phần 1: Tổng quan giao diện Frontend (6:00 - 7:00) ⭐ 60 giây
 
-**[GÓC MÁY: Trình duyệt - http://localhost:8080 - toàn màn hình]**
+**[GÓC MÁY: Trình duyệt trên Windows - http://localhost:8080 - toàn màn hình]**
 
-**Hành động:** Mở trình duyệt, truy cập `http://localhost:8080`. Di chuột vào các số liệu trên Dashboard và giải thích.
+**Hành động:** Mở trình duyệt, truy cập `http://localhost:8080`. Di chuột vào các thẻ thống kê trên Dashboard và giải thích.
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Xin chào thầy và các bạn, em là **[Tên người 2]**. Tiếp nối phần của bạn **[Tên người 1]**, em xin trình bày phần **giao diện người dùng (Frontend)** của ứng dụng. Đây là một ứng dụng đơn trang (**React SPA**) được phục vụ bởi container Nginx trên cổng **8080**.
+> "Hi everyone, my name is **[Tên người 2]**. Now let's look at the **frontend**, which is a **React Single Page Application** served by Nginx on port **8080**.
 >
-> Trên màn hình chính là khu vực **Dashboard** hiển thị tổng số lượng công việc, sự phân bổ theo từng trạng thái — bao gồm **To Do** (Cần làm), **In Progress** (Đang thực hiện) và **Done** (Đã hoàn thành) — cùng với danh sách các hoạt động gần đây. Toàn bộ dữ liệu này được lấy từ cụm Backend thông qua bộ cân bằng tải Nginx."
+> On the main screen, the dashboard shows the total task count, the distribution by status — **To Do**, **In Progress**, and **Done** — as well as high-priority tasks and recent activity. All of this data is fetched from our backend cluster through the Nginx load balancer."
 
 ---
 
-### Phần 2: Thao tác CREATE - Tạo Công Việc Mới (7:00 - 8:15) ⭐ 75 giây
+### Phần 2: CREATE - Tạo Task Mới (7:00 - 8:15) ⭐ 75 giây
 
-**[GÓC MÁY: Trình duyệt]**
+**[GÓC MÁY: Trình duyệt trên Windows]**
 
 **Hành động:**
-1. Click nút **"+"** (Floating Action Button) ở góc dưới bên phải màn hình.
-2. Cửa sổ Modal hiện ra, điền thông tin:
-   - **Title:** `Demo bởi [Tên bạn] - Level 1`
-   - **Description:** `Kiểm thử chức năng CRUD qua giao diện`
+1. Click nút **"+"** (floating action button) ở góc phải dưới màn hình.
+2. Khi hộp thoại hiện ra, nhập:
+   - **Title:** `Demo by [Tên bạn] - Level 1`
+   - **Description:** `Testing CRUD via UI`
    - **Status:** `To Do`
    - **Priority:** `High`
 3. Click nút **"Create Task"**.
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Bây giờ em sẽ demo thao tác **CREATE (Tạo mới công việc)**. Em nhấn vào **nút dấu cộng (+)** ở góc dưới bên phải để mở biểu mẫu tạo công việc.
+> "Now I will demonstrate the **CREATE** operation. I click the **plus button** at the bottom right to open the create modal.
 >
-> Em sẽ nhập tiêu đề, mô tả chi tiết, chọn trạng thái và mức độ ưu tiên là Cao (High), sau đó nhấn **Create Task**.
+> I fill in the title, description, status, and priority, and then click **Create Task**.
 >
-> Về luồng xử lý bên dưới hệ thống khi em nhấn nút tạo:
-> 1. Đầu tiên, Frontend gửi một **POST request** đến đường dẫn `/api/tasks`.
-> 2. Request này đi qua **bộ cân bằng tải Nginx** ở cổng 3000.
-> 3. Nginx sẽ điều hướng request đến một trong **3 bản sao (replicas) của Backend**.
-> 4. Backend tiến hành lưu công việc mới vào cơ sở dữ liệu **MySQL**.
-> 5. Đồng thời, Backend đẩy một **thông báo (notification)** vào hàng đợi **Redis** để các Worker xử lý bất đồng bộ.
+> Behind the scenes:
+> 1. The frontend sends a **POST request** to `/api/tasks`.
+> 2. The request goes through the **Nginx load balancer** on port 3000.
+> 3. Nginx routes it to one of the **3 backend replicas**.
+> 4. The backend saves the new task into **MySQL**.
+> 5. The backend also publishes a **notification message** to **Redis** for asynchronous processing.
 >
-> Như thầy và các bạn thấy, công việc mới đã xuất hiện ngay lập tức ở đầu danh sách và tổng số công việc trên Dashboard đã tăng lên **22**."
+> As you can see, the new task appears at the top of the list immediately, and the total count increases to **22**."
 
 ---
 
-### Phần 3: Thao tác UPDATE & DELETE (8:15 - 9:30) ⭐ 75 giây
+### Phần 3: UPDATE & DELETE (8:15 - 9:30) ⭐ 75 giây
 
-**[GÓC MÁY: Trình duyệt]**
+**[GÓC MÁY: Trình duyệt trên Windows]**
 
-#### Thao tác UPDATE (Cập nhật trạng thái)
-
-**Hành động:**
-1. Tìm công việc vừa tạo ở đầu danh sách.
-2. Click nút **"Start"** (trạng thái chuyển sang `In Progress`).
-3. Click nút **"Complete"** (trạng thái chuyển sang `Done`).
-
-**Lời dẫn (Tiếng Việt):**
-
-> "Tiếp theo đối với thao tác **UPDATE (Cập nhật)**, ngay trên công việc vừa tạo, em nhấn nút **Start** để chuyển trạng thái từ *To Do* sang *In Progress*, sau đó nhấn **Complete** để đánh dấu công việc là *Done* (Đã hoàn thành). Mỗi thao tác sẽ gửi một **PUT request** xuống API để cập nhật trực tiếp vào MySQL."
-
-#### Thao tác DELETE (Xóa công việc)
+#### Thao tác UPDATE
 
 **Hành động:**
-1. Tìm công việc vừa tạo.
-2. Click biểu tượng **thùng rác** (Trash icon).
+1. Tìm task vừa tạo ở đầu danh sách.
+2. Click **"Start"** (trạng thái chuyển sang `In Progress`).
+3. Click **"Complete"** (trạng thái chuyển sang `Done`).
+
+🗣️ **Script Tiếng Anh:**
+
+> "Next, for the **UPDATE** operation, I click **Start** on the newly created task to change its status from *To Do* to *In Progress*, and then click **Complete** to mark it as *Done*. Each click sends a **PUT request** to update the record in MySQL."
+
+#### Thao tác DELETE
+
+**Hành động:**
+1. Tìm task vừa tạo.
+2. Click biểu tượng **thùng rác** (trash icon).
 3. Xác nhận xóa (Confirm).
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Đối với thao tác **DELETE (Xóa)**, em nhấn vào biểu tượng thùng rác và xác nhận xóa. Công việc sẽ được xóa khỏi cơ sở dữ liệu thông qua một **DELETE request** gửi đến API, và tổng số lượng công việc trên bảng điều khiển đã quay trở về **21**."
+> "For the **DELETE** operation, I click the **trash icon** and confirm deletion. The task is removed via a **DELETE request** to the API, and our total task count returns to **21**."
 
 ---
 
-### Phần 4: Demo Cân Bằng Tải - Load Balancing (9:30 - 12:00) ⭐ 150 giây
+### Phần 4: Load Balancing Demo trên Windows PowerShell (9:30 - 12:00) ⭐ 150 giây
 
-**[GÓC MÁY: Terminal A]**
+**[GÓC MÁY: Cửa sổ Windows PowerShell]**
 
-#### 4.1 - Xem cấu hình Nginx Load Balancer
+#### 4.1 - Hiển thị cấu hình Nginx Load Balancer
 
-**Lệnh (Mac/Linux):**
-```bash
-cat nginx/nginx.conf | grep -A13 "upstream backend_cluster"
-```
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Windows PowerShell):**
+> "Now let's prove that **Level 2 Load Balancing** is working. First, let me show you our **Nginx configuration**."
+
+💻 **Lệnh (Windows PowerShell):**
 ```powershell
 Get-Content nginx/nginx.conf | Select-String -Pattern "upstream backend_cluster" -Context 0,13
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh (giải thích output):**
 
-> "Tiếp theo, em sẽ chứng minh cơ chế **cân bằng tải (Load Balancing)** của hệ thống ở **Level 2** đang hoạt động. Trước tiên, em xin hiển thị cấu hình của **Nginx**."
-
-**Giải thích:**
-
-> "Trong file `nginx.conf`, nhóm em đã cấu hình một khối **upstream** có tên là `backend_cluster` sử dụng thuật toán **`least_conn`** — nghĩa là Nginx sẽ ưu tiên phân phối từng request mới đến máy chủ Backend nào đang có ít kết nối hoạt động nhất.
+> "As you can see, Nginx is configured with an **upstream block** named `backend_cluster` using the **`least_conn`** algorithm — which routes each incoming request to the backend server with the fewest active connections.
 >
-> Bên trong cụm này, chúng ta có **3 máy chủ Backend**: `backend1`, `backend2` và `backend3` cùng lắng nghe ở cổng nội bộ 3000."
+> Inside the cluster, we have **3 backend instances**: `backend1`, `backend2`, and `backend3` listening on port 3000."
 
-#### 4.2 - Kiểm thử phân phối tải thực tế
+#### 4.2 - Kiểm thử phân phối tải (Load Distribution)
 
-**Lệnh (Mac/Linux - zsh/bash):**
-```bash
-for i in {1..15}; do curl -s http://localhost:3000/api/health | grep -o '"instance":"[^"]*"'; done | sort | uniq -c
-```
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Windows PowerShell):**
+> "Now I will send **15 health check requests** in a loop using PowerShell, and group the responses by the **instance ID** of the backend server that handled each request."
+
+💻 **Lệnh (Windows PowerShell):**
 ```powershell
-1..15 | ForEach-Object { 
-    (Invoke-WebRequest http://localhost:3000/api/health -UseBasicParsing).Content | Select-String -Pattern '"instance":"[^"]*"' 
-} | Group-Object | Select-Object Name, Count
+1..15 | ForEach-Object { (Invoke-RestMethod http://localhost:3000/api/health).instance } | Group-Object | Select-Object Count, Name
 ```
 
-**Lời dẫn (Tiếng Việt):**
-
-> "Bây giờ, em sẽ chạy một vòng lặp gửi liên tiếp **15 request** kiểm tra sức khỏe hệ thống đến cổng 3000 của Nginx. Mỗi phản hồi trả về sẽ cho biết chính xác **mã định danh (`instance`)** của container Backend nào đã xử lý request đó."
-
-**Hành động:** Chạy lệnh, đợi kết quả hiển thị:
+**Hành động:** Chạy lệnh trên Windows PowerShell, màn hình sẽ hiển thị bảng kết quả:
 ```
-   5 "instance":"backend-1"
-   5 "instance":"backend-2"
-   5 "instance":"backend-3"
+Count Name
+----- ----
+    5 backend-1
+    5 backend-2
+    5 backend-3
 ```
 
-**Giải thích:**
+🗣️ **Script Tiếng Anh (giải thích kết quả):**
 
-> "Nhìn vào kết quả thống kê trên màn hình, 15 request đã được **phân bổ đều qua cả 3 máy chủ**: `backend-1`, `backend-2` và `backend-3` (mỗi máy chủ xử lý 5 request). Điều này chứng minh rằng **bộ cân bằng tải Nginx** đang hoạt động hoàn toàn chính xác."
+> "Look at the result — the 15 requests are **evenly distributed across all 3 backend replicas**: `backend-1`, `backend-2`, and `backend-3`, with 5 requests each. This proves that **Nginx load balancing** is working properly."
 
-#### 4.3 - Kiểm tra biến môi trường INSTANCE_ID của từng Backend
+#### 4.3 - Kiểm tra INSTANCE_ID của từng Backend Container
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
-```bash
-docker compose exec backend1 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend2 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend3 sh -c 'echo $INSTANCE_ID'
+🗣️ **Script Tiếng Anh:**
+
+> "We can also verify the `INSTANCE_ID` environment variable inside each backend container."
+
+💻 **Lệnh (Windows PowerShell):**
+```powershell
+docker compose exec backend1 printenv INSTANCE_ID
+docker compose exec backend2 printenv INSTANCE_ID
+docker compose exec backend3 printenv INSTANCE_ID
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Mỗi container Backend đều được gắn một biến môi trường `INSTANCE_ID` riêng biệt. Như trên màn hình, `backend1`, `backend2` và `backend3` lần lượt trả về đúng mã định danh của mình.
+> "As you can see, `backend1`, `backend2`, and `backend3` each respond with their own unique `INSTANCE_ID`.
 >
-> Phần trình bày của em đến đây là hết. Xin mời bạn **[Tên người 3]** tiếp tục trình bày về **hàng đợi Redis**, **tiến trình xử lý ngầm Worker** và **điều phối container ở Level 3**."
+> That's the end of my section. Now **[Tên người 3]** will demonstrate the **Redis message queue**, **worker processing**, and **Level 3 container orchestration**."
 
 **[Hành động:]** Chuyển quyền cho Người 3.
 
 ---
 
-### ✅ Checklist cho Người 2 trước khi quay
-
-- [ ] Frontend load OK tại `http://localhost:8080`
-- [ ] Đã thử tạo và xóa 1 task nháp trước khi quay
-- [ ] Biết chính xác vị trí nút `+`, `Start`, `Complete`, biểu tượng thùng rác
-- [ ] Test lệnh vòng lặp `for` (Mac) hoặc PowerShell loop (Windows) chạy đúng
-- [ ] Webcam + mic OK
-
----
-
-# 👤 NGƯỜI 3 - REDIS, WORKER & ORCHESTRATION
-## Thời gian: 12:00 - 17:30 (5.5 phút)
+# 👤 NGƯỜI 3 - REDIS, WORKER & ORCHESTRATION (🪟 HỆ ĐIỀU HÀNH WINDOWS)
+## Nội dung: Level 2 (Redis/Worker) + Level 3 (Swarm/K8s) + Kết luận | Thời gian: 12:00 - 17:30
 
 ### Mục tiêu
-- Kiểm tra Redis Message Broker đang hoạt động
-- Giải thích mã nguồn của Worker và cơ chế publish từ Backend
-- Demo trực tiếp (Live Demo): Tạo task trên giao diện → Worker nhận và xử lý thông báo theo thời gian thực
-- Trình bày cấu hình Docker Swarm và Kubernetes (Level 3)
-- Tổng kết toàn bộ đồ án
+- Kiểm tra Redis Message Broker bằng **Windows PowerShell**
+- Show code của Worker và Backend publish message
+- Live Demo: Tạo task trên trình duyệt → Xem Worker xử lý real-time trên PowerShell
+- Show cấu hình Docker Swarm và Kubernetes trên Windows PowerShell
+- Kết luận toàn bộ bài thuyết trình
 
 ### Phần 1: Kiểm tra Redis Message Broker (12:00 - 12:45) ⭐ 45 giây
 
-**[GÓC MÁY: Terminal A]**
+**[GÓC MÁY: Cửa sổ Windows PowerShell]**
 
-**Hành động:** Chạy lệnh kiểm tra trạng thái và ping Redis.
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
-```bash
+> "Hi everyone, my name is **[Tên người 3]**. Now let's look at the **Redis message broker** and asynchronous worker processing.
+>
+> First, let's verify that the Redis container is running and healthy."
+
+💻 **Lệnh (Windows PowerShell):**
+```powershell
 docker compose ps redis
 docker compose exec redis redis-cli ping
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Xin chào thầy và các bạn, em là **[Tên người 3]**. Tiếp theo, em xin trình bày về **Redis Message Broker** và cơ chế xử lý bất đồng bộ của hệ thống.
->
-> Khi chạy lệnh `docker compose ps redis`, chúng ta thấy container Redis đang hoạt động tốt. Và khi kiểm tra bằng lệnh `redis-cli ping`, Redis phản hồi lại là **PONG**, xác nhận rằng Message Broker đang khỏe mạnh và sẵn sàng tiếp nhận kết nối."
+> "Running `docker compose ps redis` shows that the Redis container is up and healthy, and `redis-cli ping` returns **PONG**, confirming that Redis is ready to accept connections."
 
 ---
 
-### Phần 2: Giải thích mã nguồn Worker (12:45 - 13:45) ⭐ 60 giây
+### Phần 2: Hiển thị mã nguồn Worker (12:45 - 13:45) ⭐ 60 giây
 
-**[GÓC MÁY: VSCode hoặc Terminal]**
+**[GÓC MÁY: Windows PowerShell (hoặc mở file `worker/src/worker.js` trên VSCode)]**
 
-**Lành động:** Hiển thị đoạn code xử lý hàng đợi trong `worker/src/worker.js`.
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Mac/Linux):**
-```bash
-grep -A15 "blpop" worker/src/worker.js
-```
+> "Next, let's examine the **worker code** inside `worker/src/worker.js`."
 
-**Lệnh (Windows PowerShell):**
+💻 **Lệnh (Windows PowerShell):**
 ```powershell
-Get-Content worker/src/worker.js | Select-String -Pattern "blpop" -Context 0,15
+Get-Content worker/src/worker.js | Select-String -Pattern "blpop" -Context 2,15
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Trên màn hình là mã nguồn của dịch vụ **Worker**. Worker sử dụng câu lệnh **`BLPOP` (Blocking Left Pop)** để lấy các thông điệp từ hàng đợi Redis có tên là `task:notifications`.
+> "Here you can see the worker uses the **`BLPOP` command** — **Blocking Left Pop** — to consume messages from the `task:notifications` queue in Redis.
 >
-> Cơ chế `BLPOP` sẽ chờ tối đa 5 giây nếu hàng đợi đang trống rồi mới tiếp tục vòng lặp. Đây là kỹ thuật **xử lý bất đồng bộ không gây nghẽn (non-blocking async processing)**, giúp Worker không bị tiêu tốn tài nguyên CPU một cách lãng phí khi chưa có công việc mới."
+> `BLPOP` waits up to 5 seconds if the queue is empty before looping again. This provides **non-blocking asynchronous processing**, so the worker does not waste CPU cycles when there are no messages in the queue."
 
 ---
 
-### Phần 3: Cơ chế Backend đẩy thông điệp vào Redis (13:45 - 14:30) ⭐ 45 giây
+### Phần 3: Hiển thị mã nguồn Backend Publish vào Redis (13:45 - 14:30) ⭐ 45 giây
 
-**[GÓC MÁY: Terminal]**
+**[GÓC MÁY: Windows PowerShell]**
 
-**Lệnh (Mac/Linux):**
-```bash
-grep -rnE "publish|lpush|rpush" backend/src/ | head -10
-```
+🗣️ **Script Tiếng Anh:**
 
-**Lệnh (Windows PowerShell):**
+> "Now let's look at how the backend publishes notifications to Redis."
+
+💻 **Lệnh (Windows PowerShell):**
 ```powershell
 Get-ChildItem -Path backend/src -Recurse -Filter *.js | Select-String -Pattern "publish|lpush|rpush" | Select-Object -First 10
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Ở phía Backend, mỗi khi có một công việc mới được tạo ra hoặc cập nhật, hàm `publishTaskNotification` sẽ sử dụng lệnh `lpush` để đẩy một **thông điệp thông báo** vào hàng đợi Redis. Đây chính là kiến trúc **tách rời dịch vụ (Service Decoupling)** — giúp API phản hồi ngay lập tức cho người dùng mà không cần phải chờ tiến trình gửi thông báo hoàn tất."
+> "On the backend side, whenever a task is created or updated, the API calls `publishTaskNotification`, which pushes a message into the Redis list using `lpush`. This achieves **service decoupling** — the API responds immediately to the user without waiting for the notification to be processed."
 
 ---
 
 ### Phần 4: Live Demo - Worker Xử Lý Task Thời Gian Thực (14:30 - 15:30) ⭐ 60 giây
 
-**[GÓC MÁY: Terminal B (xem logs) + Trình duyệt (chia đôi màn hình nếu được)]**
+**[GÓC MÁY: Chia đôi màn hình Windows PowerShell + Trình duyệt `http://localhost:8080`]**
 
-**Bước 1:** Mở Terminal B, chạy lệnh theo dõi log trực tiếp của `worker1`:
+**Bước 1:** Trong cửa sổ Windows PowerShell, chạy lệnh theo dõi log trực tiếp của cả 2 workers:
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
-```bash
-docker compose logs -f worker1
-```
+🗣️ **Script Tiếng Anh:**
 
-**Bước 2:** Mở trình duyệt tại `http://localhost:8080`, tạo một công việc mới:
-- **Title:** `Live Demo bởi [Tên bạn]`
-- Nhấn **Create Task** (nếu `worker2` nhận task đó thì tạo thêm 1 task nữa hoặc chạy `docker compose logs -f worker1 worker2`).
+> "Now let's see this asynchronous pipeline in action. First, I will stream the real-time logs of our worker containers."
 
-**Lệnh khuyên dùng để thấy cả 2 worker cùng lúc (Mac/Linux & Windows):**
-```bash
+💻 **Lệnh (Windows PowerShell):**
+```powershell
 docker compose logs -f worker1 worker2
 ```
 
-**Lời dẫn (Tiếng Việt):**
+**Bước 2:** Mở trình duyệt tại `http://localhost:8080`, nhấn nút **"+"** tạo một task mới:
+- **Title:** `Live Demo by [Tên bạn]`
+- Nhấn **"Create Task"**.
 
-> "Bây giờ chúng ta sẽ xem luồng xử lý bất đồng bộ này hoạt động thực tế. Em sẽ mở log theo dõi trực tiếp các Worker ở cửa sổ Terminal này, sau đó quay sang trình duyệt và tạo một công việc mới."
+**Bước 3:** Chỉ vào log mới xuất hiện trên cửa sổ Windows PowerShell:
+```
+taskflow-worker-1  | [Worker] Received notification: TASK_CREATED
+taskflow-worker-1  | [Worker] Processing task notification: Live Demo by ...
+```
 
-**Giải thích khi log hiện lên trên Terminal:**
+🗣️ **Script Tiếng Anh:**
 
-> "Thầy và các bạn có thể quan sát ngay trên màn hình log: Ngay khi công việc vừa được tạo, Worker đã lập tức nhận được thông điệp từ hàng đợi Redis, tiến hành xử lý thông báo cho công việc đó và báo cáo hoàn tất. Điều này chứng minh luồng xử lý bất đồng bộ **API → Redis → Worker** hoạt động hoàn toàn trơn tru."
+> "I just created a new task in the browser, and if we look at the PowerShell terminal, the worker immediately received the notification from Redis, processed the task, and logged completion. This proves our asynchronous pipeline — **API to Redis to Worker** — is working in real time."
 
-*(Nhấn `Ctrl + C` trên Terminal để thoát chế độ xem log trực tiếp trước khi sang phần 5)*
+*(Lưu ý: Nhấn tổ hợp phím **`Ctrl + C`** trong cửa sổ PowerShell để thoát chế độ xem log trước khi chạy lệnh phần 5)*
 
 ---
 
-### Phần 5: Điều phối với Docker Swarm - Level 3 (15:30 - 16:15) ⭐ 45 giây
+### Phần 5: Docker Swarm - Level 3 (15:30 - 16:15) ⭐ 45 giây
 
-**[GÓC MÁY: Terminal]**
+**[GÓC MÁY: Windows PowerShell]**
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
-```bash
-cat docker-stack.yml | head -50
+🗣️ **Script Tiếng Anh:**
+
+> "Moving on to **Level 3 — Container Orchestration**, we first prepared a **Docker Swarm stack configuration** in `docker-stack.yml`."
+
+💻 **Lệnh (Windows PowerShell):**
+```powershell
+Get-Content docker-stack.yml -TotalCount 50
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Đối với **Level 3 (Điều phối Container)**, đầu tiên nhóm chúng em đã xây dựng file cấu hình **Docker Swarm** trong `docker-stack.yml`."
+> "Let's also check the replica configurations across our services in the stack file."
 
-**Lệnh tiếp theo:**
-```bash
-grep -A2 "replicas:" docker-stack.yml
+💻 **Lệnh tiếp (Windows PowerShell):**
+```powershell
+Select-String -Path docker-stack.yml -Pattern "replicas:" -Context 0,2
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "File cấu hình này định nghĩa đầy đủ số lượng bản sao (`replicas`), giới hạn tài nguyên CPU/RAM, chính sách tự khởi động lại và kiểm tra sức khỏe cho từng dịch vụ. Để triển khai và mở rộng quy mô trên Docker Swarm, chúng ta sử dụng các lệnh:
-> - `docker swarm init` để khởi tạo cụm Swarm.
-> - `docker stack deploy -c docker-stack.yml taskflow` để triển khai toàn bộ stack.
-> - Và `docker service scale taskflow_backend1=5` khi cần tăng số lượng bản sao."
+> "This file defines all services with their replica counts, CPU and memory limits, restart policies, and health checks. To deploy and scale on Docker Swarm, we run:
+> - `docker swarm init`
+> - `docker stack deploy -c docker-stack.yml taskflow`
+> - And `docker service scale taskflow_backend1=5` to scale the service."
 
 ---
 
-### Phần 6: Điều phối với Kubernetes - Level 3 (16:15 - 16:50) ⭐ 35 giây
+### Phần 6: Kubernetes - Level 3 (16:15 - 16:50) ⭐ 35 giây
 
-**[GÓC MÁY: Terminal]**
+**[GÓC MÁY: Windows PowerShell]**
 
-**Lệnh (Mac/Linux & Windows giống nhau):**
-```bash
-ls kubernetes/
-grep -c "kind: Deployment" kubernetes/deployment.yaml
-grep -c "kind: Service" kubernetes/deployment.yaml
+🗣️ **Script Tiếng Anh:**
+
+> "In addition to Docker Swarm, we also created **Kubernetes manifests** in the `kubernetes` directory."
+
+💻 **Lệnh (Windows PowerShell):**
+```powershell
+Get-ChildItem kubernetes/
+(Select-String -Path kubernetes/deployment.yaml -Pattern "kind: Deployment").Count
+(Select-String -Path kubernetes/deployment.yaml -Pattern "kind: Service").Count
 ```
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Bên cạnh Docker Swarm, nhóm cũng thiết lập đầy đủ bộ cấu hình **Kubernetes** nằm trong thư mục `kubernetes/`. File `deployment.yaml` bao gồm **6 Deployments**, **4 Services**, các **ConfigMaps**, **Secrets**, và đặc biệt là bộ **Horizontal Pod Autoscaler (HPA)** giúp tự động mở rộng số lượng Pod của Backend từ **2 lên đến 10 Pods** khi mức sử dụng CPU vượt quá 70%.
+> "Our `deployment.yaml` manifest includes **6 Deployments**, **4 Services**, **ConfigMaps**, **Secrets**, and a **Horizontal Pod Autoscaler (HPA)** that automatically scales the backend from **2 to 10 pods** whenever CPU utilization exceeds 70%.
 >
-> Chúng ta có thể triển khai dễ dàng bằng lệnh `kubectl apply -f kubernetes/deployment.yaml`."
+> We can deploy it to a cluster using `kubectl apply -f kubernetes/deployment.yaml`."
 
 ---
 
@@ -561,109 +514,87 @@ grep -c "kind: Service" kubernetes/deployment.yaml
 
 **[GÓC MÁY: Webcam (full màn hình) hoặc Slide tổng kết]**
 
-**Lời dẫn (Tiếng Việt):**
+🗣️ **Script Tiếng Anh:**
 
-> "Để tổng kết lại buổi demo hôm nay, nhóm chúng em đã hoàn thành và chứng minh đầy đủ cả 3 cấp độ của đồ án:
+> "To summarize what our team has demonstrated today:
 >
-> - ✅ **Ở Level 1:** Đóng gói thành công 3 thành phần cốt lõi gồm giao diện React, máy chủ Node.js và cơ sở dữ liệu MySQL vào các Docker container, giao tiếp qua mạng nội bộ và lưu trữ dữ liệu bền vững.
-> - ✅ **Ở Level 2:** Triển khai mở rộng 3 bản sao Backend phía sau bộ cân bằng tải Nginx với thuật toán `least_conn`, kết hợp cùng Redis Message Broker và 2 Worker xử lý thông báo bất đồng bộ.
-> - ✅ **Ở Level 3:** Xây dựng hoàn chỉnh kịch bản điều phối container cấp độ Production với cả Docker Swarm và Kubernetes tích hợp tính năng tự động mở rộng (Auto-scaling).
+> - ✅ **Level 1:** Three core services — React frontend, Node.js backend, and MySQL database — all containerized with Docker Compose, communicating over a custom bridge network with persistent volume storage.
+> - ✅ **Level 2:** Three backend replicas behind an Nginx load balancer using the `least_conn` algorithm, combined with a Redis message broker and two asynchronous workers for service decoupling.
+> - ✅ **Level 3:** Production-ready orchestration manifests for both Docker Swarm and Kubernetes with Horizontal Pod Autoscaling.
 >
-> Toàn bộ mã nguồn, Dockerfiles và hướng dẫn chi tiết từng bước để tái lập môi trường đều đã được nhóm đóng gói đầy đủ trong file `ReadMe.txt`.
+> All source code, Dockerfiles, and step-by-step instructions are included in our repository and documented in `ReadMe.txt`.
 >
-> Cảm ơn thầy và các bạn đã lắng nghe phần trình bày của nhóm em! Em xin chân thành cảm ơn!"
+> Thank you very much for watching our presentation!"
 
 **[Hành động:]** Vẫy tay chào kết thúc video.
 
 ---
 
-### ✅ Checklist cho Người 3 trước khi quay
+# 📋 BẢNG TỔNG HỢP LỆNH COPY NHANH THEO THÀNH VIÊN
 
-- [ ] Lệnh `docker compose exec redis redis-cli ping` trả về `PONG`
-- [ ] Đã test thử tạo task và xem log `docker compose logs -f worker1 worker2` hoạt động
-- [ ] Biết bấm `Ctrl + C` để thoát log `docker compose logs -f` trước khi gõ lệnh phần 5
-- [ ] Webcam + mic OK
+## 🍎 NGƯỜI 1 (macOS Terminal - `zsh`)
 
----
-
-# 🔧 DANH SÁCH LỆNH NHANH (CHEAT SHEET - ĐÃ FIX TOÀN BỘ)
-
-## Khởi động & Dừng
-
-| Tác vụ | Mac/Linux | Windows PowerShell |
-|--------|-----------|-------------------|
-| Start | `docker compose up -d --build --force-recreate` | `docker compose up -d --build --force-recreate` |
-| Stop | `docker compose stop` | `docker compose stop` |
-| Xóa hết | `docker compose down -v` | `docker compose down -v` |
-| Xem status | `docker compose ps` | `docker compose ps` |
-
-## Logs
-
-| Tác vụ | Mac/Linux | Windows PowerShell |
-|--------|-----------|-------------------|
-| Tất cả logs | `docker compose logs -f` | `docker compose logs -f` |
-| Worker logs | `docker compose logs -f worker1 worker2` | `docker compose logs -f worker1 worker2` |
-| 100 dòng cuối | `docker compose logs --tail=100` | `docker compose logs --tail=100` |
-
-## Test API (Người 1)
-
-**Mac/Linux (zsh/bash):**
+```bash
+docker compose ps
+```
 ```bash
 curl -s http://localhost:3000/api/health | python3 -m json.tool
+```
+```bash
 curl -s http://localhost:3000/api/tasks | python3 -c 'import sys,json; d=json.load(sys.stdin); print("Total tasks:", len(d.get("data", d)))'
+```
+```bash
 curl -s http://localhost:3000/api/stats | python3 -m json.tool
 ```
-
-**Windows PowerShell:**
-```powershell
-Invoke-RestMethod http://localhost:3000/api/health | ConvertTo-Json
-(Invoke-RestMethod http://localhost:3000/api/tasks).data.Count
-Invoke-RestMethod http://localhost:3000/api/stats | ConvertTo-Json
-```
-
-## Database (Người 1)
-
 ```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) AS total, status FROM tasks GROUP BY status;"
+```
+```bash
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; DESCRIBE tasks;"
 ```
 
-## Load Balancing Test (Người 2)
+---
 
-**Mac/Linux (zsh/bash):**
-```bash
-cat nginx/nginx.conf | grep -A13 "upstream backend_cluster"
-for i in {1..15}; do curl -s http://localhost:3000/api/health | grep -o '"instance":"[^"]*"'; done | sort | uniq -c
-docker compose exec backend1 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend2 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend3 sh -c 'echo $INSTANCE_ID'
-```
+## 🪟 NGƯỜI 2 (Windows OS - PowerShell)
 
-**Windows PowerShell:**
 ```powershell
 Get-Content nginx/nginx.conf | Select-String -Pattern "upstream backend_cluster" -Context 0,13
-1..15 | ForEach-Object { (Invoke-WebRequest http://localhost:3000/api/health -UseBasicParsing).Content | Select-String -Pattern '"instance":"[^"]*"' } | Group-Object | Select-Object Name, Count
-docker compose exec backend1 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend2 sh -c 'echo $INSTANCE_ID'
-docker compose exec backend3 sh -c 'echo $INSTANCE_ID'
 ```
-
-## Redis, Worker & Orchestration (Người 3)
-
-**Mac/Linux (zsh/bash):**
-```bash
-docker compose ps redis
-docker compose exec redis redis-cli ping
-grep -A15 "blpop" worker/src/worker.js
-grep -rnE "publish|lpush|rpush" backend/src/ | head -10
-docker compose logs -f worker1 worker2
-cat docker-stack.yml | head -50
-grep -A2 "replicas:" docker-stack.yml
-ls kubernetes/
-grep -c "kind: Deployment" kubernetes/deployment.yaml
-grep -c "kind: Service" kubernetes/deployment.yaml
+```powershell
+1..15 | ForEach-Object { (Invoke-RestMethod http://localhost:3000/api/health).instance } | Group-Object | Select-Object Count, Name
+```
+```powershell
+docker compose exec backend1 printenv INSTANCE_ID
+docker compose exec backend2 printenv INSTANCE_ID
+docker compose exec backend3 printenv INSTANCE_ID
 ```
 
 ---
 
-**Chúc nhóm quay video thành công! 🎬🚀**
+## 🪟 NGƯỜI 3 (Windows OS - PowerShell)
+
+```powershell
+docker compose ps redis
+docker compose exec redis redis-cli ping
+```
+```powershell
+Get-Content worker/src/worker.js | Select-String -Pattern "blpop" -Context 2,15
+```
+```powershell
+Get-ChildItem -Path backend/src -Recurse -Filter *.js | Select-String -Pattern "publish|lpush|rpush" | Select-Object -First 10
+```
+```powershell
+docker compose logs -f worker1 worker2
+```
+*(Nhấn `Ctrl + C` để dừng xem log trước khi chạy tiếp các lệnh dưới)*
+```powershell
+Get-Content docker-stack.yml -TotalCount 50
+```
+```powershell
+Select-String -Path docker-stack.yml -Pattern "replicas:" -Context 0,2
+```
+```powershell
+Get-ChildItem kubernetes/
+(Select-String -Path kubernetes/deployment.yaml -Pattern "kind: Deployment").Count
+(Select-String -Path kubernetes/deployment.yaml -Pattern "kind: Service").Count
+```
