@@ -27,7 +27,7 @@ Demonstrate đầy đủ 3 levels:
 
 **TRƯỚC KHI QUAY:**
 - Mở terminal, cd vào project
-- Chạy: `docker compose up -d --build`
+- Chạy: `docker compose up -d --build --force-recreate`
 - Đợi 30 giây cho services healthy
 - Mở trình duyệt tại http://localhost:8080
 
@@ -56,23 +56,23 @@ Demonstrate đầy đủ 3 levels:
 
 **THAO TÁC:**
 ```bash
-# Chạy trong terminal
 docker compose ps
 ```
 
 **GIẢI THÍCH (Voiceover):**
 > "Các bạn thấy đây, tổng cộng có **9 services** đang chạy:
-> - **frontend**: React app served by nginx
-> - **nginx**: Load balancer
-> - **backend1, backend2, backend3**: 3 Node.js API replicas
-> - **redis**: Message broker
-> - **worker1, worker2**: Async task processors
-> - **database**: MySQL 8"
+> - **taskflow-frontend**: React app served by nginx
+> - **taskflow-nginx**: Load balancer (port 3000)
+> - **taskflow-backend-1, -2, -3**: 3 Node.js API replicas
+> - **taskflow-redis**: Message broker
+> - **taskflow-worker-1, -2**: Async task processors
+> - **taskflow-database**: MySQL 8 (port 3306)"
 
 **ĐIỂM CẦN SHOW:**
 - Tất cả containers đều "healthy" hoặc "Up"
 - 3 backend replicas
 - 2 workers
+- Frontend exposed port 8080, Nginx port 3000
 
 ---
 
@@ -95,12 +95,10 @@ docker compose ps
 
 **GIẢI THÍCH:**
 > "Các bạn thấy dashboard hiển thị:
-> - Total Tasks: 17
-> - To Do: 11
-> - In Progress: 3
-> - Done: 3
+> - Total Tasks: 21 (số thực tế)
+> - To Do, In Progress, Done counts
 >
-> Đây là dữ liệu được seed tự động từ database."
+> Đây là dữ liệu được seed tự động từ database init script."
 
 ---
 
@@ -119,16 +117,17 @@ curl -s http://localhost:3000/api/health | python3 -m json.tool
 **GIẢI THÍCH (Voiceover):**
 > "Health endpoint trả về:
 > - **status**: ok
+> - **instance**: backend-1 (cho thấy load balancer đang route đến đúng instance)
 > - **database**: connected ✓
 > - **redis**: connected ✓
 > - **uptime**: thời gian server chạy"
 
 **THAO TÁC 2 - Test Tasks Endpoint:**
 ```bash
-curl -s http://localhost:3000/api/tasks | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Total tasks: {len(d[\"data\"])}')"
+curl -s http://localhost:3000/api/tasks | python3 -c 'import sys,json; d=json.load(sys.stdin); print("Total tasks:", len(d.get("data", d)))'
 ```
 
-> "API trả về **17 tasks** từ MySQL database."
+> "API trả về **21 tasks** từ MySQL database."
 
 **THAO TÁC 3 - Test Stats Endpoint:**
 ```bash
@@ -136,9 +135,9 @@ curl -s http://localhost:3000/api/stats | python3 -m json.tool
 ```
 
 > "Stats endpoint trả về statistics bao gồm:
-> - total, todo, in-progress, done counts
-> - high priority count
-> - 5 recent tasks"
+> - total, todo, in_progress, done counts
+> - priority counts
+> - recent tasks"
 
 ---
 
@@ -169,7 +168,7 @@ curl -s http://localhost:3000/api/stats | python3 -m json.tool
 
 **VERIFY:**
 - Task mới xuất hiện trong danh sách
-- Dashboard total tăng lên 18
+- Dashboard total tăng lên 22
 
 #### READ - Xem Task
 
@@ -208,20 +207,20 @@ curl -s http://localhost:3000/api/stats | python3 -m json.tool
 
 **THAO TÁC:**
 ```bash
-# Check database
-docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) FROM tasks;"
+docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) AS total, status FROM tasks GROUP BY status;"
 ```
 
 **GIẢI THÍCH:**
-> "Database đang có 17 tasks. Dữ liệu được persist qua Docker volume."
+> "Database đang có **21 tasks**. Dữ liệu được persist qua Docker volume `taskflow-mysql`."
 
 **THAO TÁC:**
 ```bash
-# Show table structure
 docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; DESCRIBE tasks;"
 ```
 
 > "Table structure với các columns: id, title, description, status, priority, created_at, updated_at"
+
+> ⚠️ **Lưu ý:** Có thể có warning "Using a password on the command line interface can be insecure" - đây là bình thường trong môi trường development.
 
 ---
 
@@ -240,32 +239,28 @@ docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; DESCRI
 
 **THAO TÁC:**
 ```bash
-cat nginx/nginx.conf | grep -A10 "upstream"
+cat nginx/nginx.conf | grep -A15 "upstream backend_cluster"
 ```
 
 **GIẢI THÍCH:**
 > "Nginx được cấu hình với **upstream backend_cluster** sử dụng thuật toán **least_conn**.
 >
-> Load balancer phân phối requests đến 3 backend replicas:
-> - backend1:3000
-> - backend2:3000
-> - backend3:3000"
+> Load balancer phân phối requests đến 3 backend replicas (container names):
+> - taskflow-backend-1:3000
+> - taskflow-backend-2:3000
+> - taskflow-backend-3:3000"
 
 #### 7.2 - Test Load Balancing Distribution
 
 **THAO TÁC:**
 ```bash
-# Send 30 requests
-for i in {1..30}; do curl -s http://localhost:3000/api/health > /dev/null; done
-
-# Check logs
-echo "Backend 1:" && docker compose logs backend1 2>&1 | grep -c "GET /api"
-echo "Backend 2:" && docker compose logs backend2 2>&1 | grep -c "GET /api"
-echo "Backend 3:" && docker compose logs backend3 2>&1 | grep -c "GET /api"
+for i in {1..15}; do curl -s http://localhost:3000/api/health | grep -o '"instance":"[^"]*"'; done | sort | uniq -c
 ```
 
 **GIẢI THÍCH:**
-> "Các bạn thấy đấy, **30 requests** được phân phối đều qua cả 3 backend replicas.
+> "Các bạn thấy đấy, requests được phân phối đều qua các backend replicas.
+>
+> Load balancer sử dụng thuật toán **least_conn** để route đến instance có ít active connections nhất.
 >
 > Điều này prove rằng **nginx load balancer** đang hoạt động."
 
@@ -306,23 +301,25 @@ docker compose exec redis redis-cli ping
 
 **THAO TÁC:**
 ```bash
-cat worker/src/worker.js | grep -A10 "BLPOP"
+grep -A15 "blpop" worker/src/worker.js
 ```
 
 **GIẢI THÍCH:**
 > "Worker sử dụng **BLPOP** (Blocking Left POP) để consume messages từ Redis queue 'task:notifications'.
 >
-> Khi có message, worker xử lý và simulate gửi notification."
+> Khi có message, worker xử lý và simulate gửi notification.
+>
+> BLPOP chờ tối đa 5 giây nếu queue trống, sau đó tiếp tục loop."
 
 #### 8.3 - Show Backend Publishes
 
 **THAO TÁC:**
 ```bash
-grep -A5 "publishTaskNotification" backend/src/routes/tasks.js
+grep -rnE "publish|lpush|rpush" backend/src/ | head -20
 ```
 
 **GIẢI THÍCH:**
-> "Khi task được tạo, backend **publish notification** đến Redis queue.
+> "Khi task được tạo hoặc cập nhật, backend **publish notification** đến Redis queue.
 >
 > Đây là ví dụ về **service decoupling** - task creation không phải đợi notification được gửi."
 
@@ -392,7 +389,7 @@ grep -A3 "docker stack" ReadMe.txt
 
 **THAO TÁC:**
 ```bash
-echo "Scale backend: docker service scale taskflow_backend=5"
+echo "Scale backend: docker service scale taskflow_backend1=5"
 echo "Scale frontend: docker service scale taskflow_frontend=3"
 ```
 
@@ -549,9 +546,11 @@ Frontend: React + Vite → nginx → Port 8080
 - 📱 Nếu có multi-cam: 1 cam góc rộng + 1 cam focus vào màn hình
 
 ### Lỗi thường gặp:
-- ❌ Services chưa healthy → Đợi thêm hoặc restart
-- ❌ Worker không nhận task → Check Redis connection
-- ❌ Load balancing không work → Restart nginx container
+- ❌ Services chưa healthy → Đợi thêm hoặc restart: `docker compose restart`
+- ❌ Worker không nhận task → Check Redis: `docker compose exec redis redis-cli ping`
+- ❌ Load balancing không work → Restart nginx: `docker compose restart nginx`
+- ❌ Nginx trả về trang mặc định → Reload nginx: `docker exec taskflow-nginx nginx -s reload`
+- ❌ Backend lỗi kết nối database → Check: `docker compose logs backend1 | grep -i error`
 
 ---
 
@@ -570,28 +569,40 @@ Frontend: React + Vite → nginx → Port 8080
 
 ## 📋 COMMANDS ĐỂ TEST NHANH
 
+**1. Start all services:**
 ```bash
-# 1. Start all services
-docker compose up -d --build
+docker compose up -d --build --force-recreate
+```
 
-# 2. Wait 30 seconds
-sleep 30
-
-# 3. Check status
+**2. Check status:**
+```bash
 docker compose ps
+```
 
-# 4. Test Level 1
-curl http://localhost:8080  # Frontend
-curl http://localhost:3000/api/health  # Backend health
-curl http://localhost:3000/api/tasks  # Get tasks
+**3. Test Level 1 (Frontend, Health, Tasks, Stats):**
+```bash
+curl -s http://localhost:8080 | head -5
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+curl -s http://localhost:3000/api/tasks | python3 -c 'import sys,json; print("Tasks:", len(json.load(sys.stdin).get("data",[])))'
+curl -s http://localhost:3000/api/stats | python3 -m json.tool
+```
 
-# 5. Test Level 2
-for i in {1..30}; do curl http://localhost:3000/api/health > /dev/null; done  # Load test
-docker compose logs worker1 --tail 20  # Check worker
+**4. Test Level 2 (Load Balancing & Worker):**
+```bash
+for i in {1..15}; do curl -s http://localhost:3000/api/health | grep -o '"instance":"[^"]*"'; done | sort | uniq -c
+docker compose logs worker1 --tail 5
+```
 
-# 6. Test Level 3
-cat docker-stack.yml  # Swarm config
-cat kubernetes/deployment.yaml  # K8s config
+**5. Test Level 3 (Swarm & K8s configs):**
+```bash
+cat docker-stack.yml | head -50
+cat kubernetes/deployment.yaml | head -50
+```
+
+**6. Verify Redis & Database:**
+```bash
+docker compose exec redis redis-cli ping
+docker compose exec database mysql -uroot -ptaskflow123 -e "USE taskflow; SELECT COUNT(*) AS total, status FROM tasks GROUP BY status;"
 ```
 
 ---

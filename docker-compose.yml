@@ -9,6 +9,9 @@ services:
     container_name: taskflow-frontend
     ports:
       - "8080:80"
+    depends_on:
+      nginx:
+        condition: service_healthy
     networks:
       - app-network
     healthcheck:
@@ -63,7 +66,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://127.0.0.1:8080
+      - CORS_ORIGIN=*
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
@@ -93,7 +96,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://127.0.0.1:8080
+      - CORS_ORIGIN=*
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
@@ -123,7 +126,7 @@ services:
       - DB_NAME=${DB_NAME:-taskflow}
       - DB_USER=${DB_USER:-taskflow}
       - DB_PASSWORD=${DB_PASSWORD:-taskflow123}
-      - CORS_ORIGIN=http://127.0.0.1:8080
+      - CORS_ORIGIN=*
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
