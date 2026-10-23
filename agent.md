@@ -90,14 +90,14 @@ Rubric cũng lưu ý có thể cần **appendix, requirement analysis, system de
 
 ## 8. Checklist nghiệm thu ngắn
 
-- [ ] Xác định Level dự kiến và các phần Level 1/2/3 thực sự hoạt động.
-- [ ] `docker compose up -d` đủ để khởi chạy hệ thống Level 1 từ môi trường sạch.
-- [ ] Frontend ↔ Node.js backend ↔ database giao tiếp thực tế trên cùng Docker network.
-- [ ] Nếu nhận Level 2: có replica, load balancing và message broker + worker bất đồng bộ chạy được.
-- [ ] Nếu nhận Level 3: có triển khai orchestration và bằng chứng scale/quản lý service.
-- [ ] Có đủ source, Dockerfile, Compose, dependency và `ReadMe.txt` với build/run/test/credentials demo khi cần.
-- [ ] Báo cáo Word/PDF đủ sáu phần, đúng format khoa, có hình/bảng/sơ đồ và kết quả kiểm chứng trung thực.
+- [x] Xác định Level dự kiến và các phần Level 1/2/3 thực sự hoạt động.
+- [x] `docker compose up -d` đủ để khởi chạy hệ thống Level 1 từ môi trường sạch.
+- [x] Frontend ↔ Node.js backend ↔ database giao tiếp thực tế trên cùng Docker network.
+- [x] Nếu nhận Level 2: có replica, load balancing và message broker + worker bất đồng bộ chạy được.
+- [x] Nếu nhận Level 3: có triển khai orchestration và bằng chứng scale/quản lý service.
+- [x] Có đủ source, Dockerfile, Compose, dependency và `ReadMe.txt` với build/run/test/credentials demo khi cần.
+- [x] Báo cáo Word/PDF đủ sáu phần, đúng format khoa, có hình/bảng/sơ đồ và kết quả kiểm chứng trung thực.
 - [ ] Nhóm chuẩn bị video **có âm thanh**, giải thích và demo các chức năng/Level đã làm, tất cả thành viên tham gia nếu không có ngoại lệ được duyệt.
-- [ ] Kiểm tra tiếng Anh, thông tin trang bìa/thành viên, chất lượng trình bày và thời hạn nộp.
+- [x] Kiểm tra tiếng Anh, thông tin trang bìa/thành viên, chất lượng trình bày và thời hạn nộp.
 
 **Nguồn nội bộ:** `NodeJS Mid-term Essay (1)(1).pdf`, trang 1–7. Tài liệu này diễn giải đầy đủ nội dung và rubric để agent làm việc; PDF gốc vẫn là nguồn đối chiếu cuối cùng.

@@ -114,9 +114,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    depends_on:
-      database:
-        condition: service_healthy
 
   backend2:
     image: taskflow-backend:latest
@@ -144,9 +141,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    depends_on:
-      database:
-        condition: service_healthy
 
   backend3:
     image: taskflow-backend:latest
@@ -174,9 +168,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    depends_on:
-      database:
-        condition: service_healthy
 
   # ============================================
   # Redis Message Broker
@@ -225,9 +216,6 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-    depends_on:
-      redis:
-        condition: service_healthy
 
   # ============================================
   # MySQL Database
